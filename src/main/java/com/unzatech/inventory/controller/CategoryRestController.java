@@ -12,35 +12,48 @@ import org.springframework.web.bind.annotation.*;
 public class CategoryRestController {
     @Autowired
     private ICategoryService service;
-    /*
-    * get all the categories
-    * @return
-    * */
+
+    /**
+     * get all categories
+     * @return
+     */
     @GetMapping("/categories")
     public ResponseEntity<CategoryResponseRest> searchCategories() {
         ResponseEntity<CategoryResponseRest> response = service.search();
         return response;
     }
 
-    /*
-    * get categories by id
-    * @param id
-    * @return
-    * */
+    /**
+     * get categories by id
+     * @param id
+     * @return
+     */
     @GetMapping("/categories/{id}")
     public ResponseEntity<CategoryResponseRest> searchCategoriesById(@PathVariable Long id) {
         ResponseEntity<CategoryResponseRest> response = service.searchById(id);
         return response;
     }
 
-    /*
-     * get categories by id
-     * @param Category
+    /**
+     * save categories
+     * @param category
      * @return
-     * */
+     */
     @PostMapping("/categories")
     public ResponseEntity<CategoryResponseRest> save(@RequestBody Category category) {
         ResponseEntity<CategoryResponseRest> response = service.save(category);
+        return response;
+    }
+
+    /**
+     * update categories
+     * @param category
+     * @param id
+     * @return
+     */
+    @PutMapping("/categories/{id}")
+    public ResponseEntity<CategoryResponseRest> update(@RequestBody Category category, @PathVariable Long id) {
+        ResponseEntity<CategoryResponseRest> response = service.update(category, id);
         return response;
     }
 }
