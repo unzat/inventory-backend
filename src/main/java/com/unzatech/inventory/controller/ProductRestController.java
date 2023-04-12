@@ -70,6 +70,16 @@ public class ProductRestController {
     }
 
     /**
+     * search products
+     * @return
+     */
+    @GetMapping("/products")
+    public ResponseEntity<ProductResponseRest> search(){
+        ResponseEntity<ProductResponseRest> response = service.search();
+        return response;
+    }
+
+    /**
      * delete product by id
      * @param id
      * @return

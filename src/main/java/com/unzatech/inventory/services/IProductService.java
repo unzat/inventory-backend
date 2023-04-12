@@ -6,8 +6,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.transaction.annotation.Transactional;
 
 public interface IProductService {
-
-    @Transactional
+    public ResponseEntity<ProductResponseRest> search();
     public ResponseEntity<ProductResponseRest> save(Product product, Long categoryId);
     public ResponseEntity<ProductResponseRest> searchById(Long id);
     public ResponseEntity<ProductResponseRest> searchNyName(String name);

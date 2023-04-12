@@ -4,6 +4,7 @@ import com.unzatech.inventory.dao.ICategoryDao;
 import com.unzatech.inventory.dao.IProductDao;
 import com.unzatech.inventory.model.Category;
 import com.unzatech.inventory.model.Product;
+import com.unzatech.inventory.response.CategoryResponseRest;
 import com.unzatech.inventory.response.ProductResponseRest;
 import com.unzatech.inventory.util.Util;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,6 +23,35 @@ public class ProductServiceImpl implements IProductService {
     private IProductDao productDao;
     @Autowired
     private ICategoryDao categoryDao;
+
+    @Override
+    @Transactional(readOnly = true)
+    public ResponseEntity<ProductResponseRest> search() {
+        ProductResponseRest response = new ProductResponseRest();
+        List<Product> list = new ArrayList<>();
+        List<Product> listAux = new ArrayList<>();
+        try {
+            listAux = (List<Product>) productDao.findAll();
+
+            if (listAux.size() > 0){
+                listAux.stream().forEach((product) -> {
+                    byte[] imageDescompressed = Util.decompressZLib(product.getPicture());
+                    product.setPicture(imageDescompressed);
+                    list.add(product);
+                });
+                response.getProductResponse().setProduct(list);
+                response.setMetadata("Respuesta ok","00","Productos encontrados");
+            }else{
+                response.setMetadata("Respuesta no ok","-1","Productos no encontrados");
+                return new ResponseEntity<ProductResponseRest>(response, HttpStatus.NOT_FOUND);
+            }
+        }catch (Exception e){
+            response.setMetadata("Respuesta no ok","-1","Error al consultar producto por nombre");
+            e.getStackTrace();
+            return new ResponseEntity<ProductResponseRest>(response, HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+        return new ResponseEntity<ProductResponseRest>(response, HttpStatus.OK);
+    }
 
     @Override
     @Transactional
