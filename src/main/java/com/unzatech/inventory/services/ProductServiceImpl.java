@@ -80,7 +80,53 @@ public class ProductServiceImpl implements IProductService {
                 return new ResponseEntity<ProductResponseRest>(response, HttpStatus.BAD_REQUEST);
             }
         }catch (Exception e){
-            response.setMetadata("Respuesta no ok","-1","Error al grabar categoria");
+            response.setMetadata("Respuesta no ok","-1","Error al grabar producto");
+            e.getStackTrace();
+            return new ResponseEntity<ProductResponseRest>(response, HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+        return new ResponseEntity<ProductResponseRest>(response, HttpStatus.OK);
+    }
+
+    @Override
+    @Transactional
+    public ResponseEntity<ProductResponseRest> update(Product product, Long id, Long categoryId) {
+        ProductResponseRest response = new ProductResponseRest();
+        List<Product> list = new ArrayList<>();
+        try {
+            // search category to set in the product object
+            Optional<Category> category = categoryDao.findById(categoryId);
+            if (category.isPresent()) {
+                product.setCategory(category.get());
+            } else {
+                response.setMetadata("Respuesta no ok","-1","Categoria no encontrada para asociar al producto");
+                return new ResponseEntity<ProductResponseRest>(response, HttpStatus.NOT_FOUND);
+            }
+
+            // buscar product a actualizar
+            Optional<Product> productSearch = productDao.findById(id);
+
+            if (productSearch.isPresent()) {
+                productSearch.get().setQuantity(product.getQuantity());
+                productSearch.get().setCategory(product.getCategory());
+                productSearch.get().setName(product.getName());
+                productSearch.get().setPicture(product.getPicture());
+                productSearch.get().setPrice(product.getPrice());
+
+                Product productUpdated = productDao.save(productSearch.get());
+                if (productUpdated != null) {
+                    list.add(productUpdated);
+                    response.getProductResponse().setProduct(list);
+                    response.setMetadata("Respuesta ok","00","Producto actualizado");
+                } else {
+                    response.setMetadata("Respuesta no ok","-1","Producto no actualizado");
+                    return new ResponseEntity<ProductResponseRest>(response, HttpStatus.BAD_REQUEST);
+                }
+            } else {
+                response.setMetadata("Respuesta no ok","-1","Producto no actualizado");
+                return new ResponseEntity<ProductResponseRest>(response, HttpStatus.BAD_REQUEST);
+            }
+        }catch (Exception e){
+            response.setMetadata("Respuesta no ok","-1","Error al actualizar producto");
             e.getStackTrace();
             return new ResponseEntity<ProductResponseRest>(response, HttpStatus.INTERNAL_SERVER_ERROR);
         }
