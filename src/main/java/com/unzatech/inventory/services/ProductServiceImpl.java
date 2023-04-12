@@ -4,8 +4,8 @@ import com.unzatech.inventory.dao.ICategoryDao;
 import com.unzatech.inventory.dao.IProductDao;
 import com.unzatech.inventory.model.Category;
 import com.unzatech.inventory.model.Product;
-import com.unzatech.inventory.response.CategoryResponseRest;
 import com.unzatech.inventory.response.ProductResponseRest;
+import com.unzatech.inventory.util.Util;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -51,6 +51,31 @@ public class ProductServiceImpl implements IProductService {
             }
         }catch (Exception e){
             response.setMetadata("Respuesta no ok","-1","Error al grabar categoria");
+            e.getStackTrace();
+            return new ResponseEntity<ProductResponseRest>(response, HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+        return new ResponseEntity<ProductResponseRest>(response, HttpStatus.OK);
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public ResponseEntity<ProductResponseRest> searchById(Long id) {
+        ProductResponseRest response = new ProductResponseRest();
+        List<Product> list = new ArrayList<>();
+        try {
+            Optional<Product> product = productDao.findById(id);
+            if (product.isPresent()){
+                byte[] imageDescompressed = Util.decompressZLib(product.get().getPicture());
+                product.get().setPicture(imageDescompressed);
+                list.add(product.get());
+                response.getProductResponse().setProduct(list);
+                response.setMetadata("Respuesta ok","00","Producto encontrado");
+            }else{
+                response.setMetadata("Respuesta no ok","-1","Producto no encontrado");
+                return new ResponseEntity<ProductResponseRest>(response, HttpStatus.NOT_FOUND);
+            }
+        }catch (Exception e){
+            response.setMetadata("Respuesta no ok","-1","Error al consultar producto por id");
             e.getStackTrace();
             return new ResponseEntity<ProductResponseRest>(response, HttpStatus.INTERNAL_SERVER_ERROR);
         }

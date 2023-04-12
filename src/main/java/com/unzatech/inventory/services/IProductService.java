@@ -8,6 +8,6 @@ import org.springframework.transaction.annotation.Transactional;
 public interface IProductService {
 
     @Transactional
-    ResponseEntity<ProductResponseRest> save(Product product, Long categoryId);
-
+    public ResponseEntity<ProductResponseRest> save(Product product, Long categoryId);
+    public ResponseEntity<ProductResponseRest> searchById(Long id);
 }
