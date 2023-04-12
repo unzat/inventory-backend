@@ -1,6 +1,7 @@
 package com.unzatech.inventory.controller;
 
 import com.unzatech.inventory.model.Product;
+import com.unzatech.inventory.response.CategoryResponseRest;
 import com.unzatech.inventory.response.ProductResponseRest;
 import com.unzatech.inventory.services.IProductService;
 import com.unzatech.inventory.util.Util;
@@ -57,9 +58,25 @@ public class ProductRestController {
         return response;
     }
 
+    /**
+     * search products by name
+     * @param name
+     * @return
+     */
     @GetMapping("/products/filter/{name}")
     public ResponseEntity<ProductResponseRest> searchProductsByName(@PathVariable String name) {
         ResponseEntity<ProductResponseRest> response = service.searchNyName(name);
+        return response;
+    }
+
+    /**
+     * delete product by id
+     * @param id
+     * @return
+     */
+    @DeleteMapping("/products/{id}")
+    public ResponseEntity<ProductResponseRest> deleteById(@PathVariable Long id) {
+        ResponseEntity<ProductResponseRest> response = service.deleteById(id);
         return response;
     }
 }
