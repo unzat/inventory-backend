@@ -3,9 +3,13 @@ package com.unzatech.inventory.controller;
 import com.unzatech.inventory.model.Category;
 import com.unzatech.inventory.response.CategoryResponseRest;
 import com.unzatech.inventory.services.ICategoryService;
+import com.unzatech.inventory.util.CategoryExcelExporter;
+import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+
+import java.io.IOException;
 
 @CrossOrigin(origins = {"http://localhost:4200"})
 @RestController
@@ -67,5 +71,21 @@ public class CategoryRestController {
     public ResponseEntity<CategoryResponseRest> delete(@PathVariable Long id) {
         ResponseEntity<CategoryResponseRest> response = service.deleteById(id);
         return response;
+    }
+
+    /**
+     * export excel file
+     * @param response
+     * @throws IOException
+     */
+    @GetMapping("/categories/export/excel")
+    public void exportToExcel(HttpServletResponse response) throws IOException {
+        response.setContentType("application/octet-stream");
+        String headerKey = "Content-Disposition";
+        String headerValue = "attachment; filename=result-categories";
+        response.setHeader(headerKey, headerValue);
+        ResponseEntity<CategoryResponseRest> categoryResponse = service.search();
+        CategoryExcelExporter excelExporter = new CategoryExcelExporter(categoryResponse.getBody().getCategoryResponse().getCategory());
+        excelExporter.export(response);
     }
 }
