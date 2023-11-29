@@ -21,7 +21,7 @@ public class CategoryServiceImpl implements ICategoryService{
     private ICategoryDao categoryDao;
     @Override
     @Transactional(readOnly = true)
-    public ResponseEntity<CategoryResponseRest> search() {
+    public ResponseEntity<CategoryResponseRest> list() {
         CategoryResponseRest response = new CategoryResponseRest();
         try {
             List<Category> category = (List<Category>) categoryDao.findAll();
@@ -37,7 +37,7 @@ public class CategoryServiceImpl implements ICategoryService{
 
     @Override
     @Transactional(readOnly = true)
-    public ResponseEntity<CategoryResponseRest> searchById(Long id) {
+    public ResponseEntity<CategoryResponseRest> find(Long id) {
         CategoryResponseRest response = new CategoryResponseRest();
         List<Category> list = new ArrayList<>();
         try {

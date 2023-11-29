@@ -10,11 +10,11 @@ public class ResponseRest {
         return metadata;
     }
 
-    public void setMetadata(String type, String code, String date) {
+    public void setMetadata(String type, String code, String data) {
         HashMap<String, String> map = new HashMap<String, String>();
         map.put("type", type);
         map.put("code", code);
-        map.put("date", date);
+        map.put("data", data);
         metadata.add(map);
     }
 }

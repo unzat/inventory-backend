@@ -24,7 +24,7 @@ public class CategoryRestController {
      */
     @GetMapping("/categories")
     public ResponseEntity<CategoryResponseRest> searchCategories() {
-        ResponseEntity<CategoryResponseRest> response = service.search();
+        ResponseEntity<CategoryResponseRest> response = service.list();
         return response;
     }
 
@@ -35,7 +35,7 @@ public class CategoryRestController {
      */
     @GetMapping("/categories/{id}")
     public ResponseEntity<CategoryResponseRest> searchCategoriesById(@PathVariable Long id) {
-        ResponseEntity<CategoryResponseRest> response = service.searchById(id);
+        ResponseEntity<CategoryResponseRest> response = service.find(id);
         return response;
     }
 
@@ -84,7 +84,7 @@ public class CategoryRestController {
         String headerKey = "Content-Disposition";
         String headerValue = "attachment; filename=result-categories";
         response.setHeader(headerKey, headerValue);
-        ResponseEntity<CategoryResponseRest> categoryResponse = service.search();
+        ResponseEntity<CategoryResponseRest> categoryResponse = service.list();
         CategoryExcelExporter excelExporter = new CategoryExcelExporter(categoryResponse.getBody().getCategoryResponse().getCategory());
         excelExporter.export(response);
     }
